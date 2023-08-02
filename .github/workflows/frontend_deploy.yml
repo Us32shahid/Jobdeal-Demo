@@ -1,0 +1,42 @@
+#name: jobdeal-landing-page
+#
+#on:
+#  push:
+#    branches:
+#      - main  # Adjust to your main branch name
+#
+#jobs:
+#  build_and_deploy:
+#    name: Build and Deploy
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#
+#      - name: Set up Node.js 16
+#        uses: actions/setup-node@v2
+#        with:
+#          node-version: '16'  # Use Node.js 16
+#
+#      - name: Install project dependencies
+#        run: npm install
+#
+#      - name: Build the frontend
+#        run: npm run build  # Replace with your build command
+#
+#      - name: Deploy to Droplet
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: 178.128.114.155
+#          username: root  # Droplet username is root
+#          key: ${{ secrets.SSH_PRIVATE_KEY }}
+#          port: 22
+#          script: |
+#            ssh -i root@178.128.114.155 << 'ENDSSH'
+#            cd /var/www/jobdeal-landing-page
+#            rm -rf *
+#            # Assuming your build artifacts are in the "build" directory
+#            cp -R /var/www/jobdeal-landing-page/* .
+#            ENDSSH
+#
