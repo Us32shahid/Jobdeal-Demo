@@ -1,42 +1,46 @@
-#name: jobdeal-landing-page
-#
-#on:
+# name: jobdeal-landing-page
+
+# on:
 #  push:
 #    branches:
 #      - main  # Adjust to your main branch name
-#
-#jobs:
+
+# jobs:
 #  build_and_deploy:
 #    name: Build and Deploy
 #    runs-on: ubuntu-latest
-#
+#    container:
+#     image: node:16
+
 #    steps:
 #      - name: Checkout code
 #        uses: actions/checkout@v2
-#
-#      - name: Set up Node.js 16
-#        uses: actions/setup-node@v2
-#        with:
-#          node-version: '16'  # Use Node.js 16
-#
+
 #      - name: Install project dependencies
 #        run: npm install
-#
+
 #      - name: Build the frontend
 #        run: npm run build  # Replace with your build command
-#
+#      - name: Zip build directory
+#        run: zip -r build.zip build/
+
 #      - name: Deploy to Droplet
 #        uses: appleboy/ssh-action@master
 #        with:
-#          host: 178.128.114.155
-#          username: root  # Droplet username is root
+#          host: ${{ secrets.DROPLET_IP }}  # Add your droplet's IP address as a GitHub secret
+#          username: root  # Replace with your droplet's SSH username
 #          key: ${{ secrets.SSH_PRIVATE_KEY }}
-#          port: 22
-#          script: |
-#            ssh -i root@178.128.114.155 << 'ENDSSH'
-#            cd /var/www/jobdeal-landing-page
-#            rm -rf *
-#            # Assuming your build artifacts are in the "build" directory
-#            cp -R /var/www/jobdeal-landing-page/* .
-#            ENDSSH
-#
+#          source: build.zip
+#          target: /path/to/droplet/directory/
+        
+#          #  host: 178.128.114.155
+#         #  username: root  # Droplet username is root
+#         #  key: ${{ secrets.SSH_PRIVATE_KEY }}
+#         #  port: 22
+#         #  script: |
+#         #    ssh -i root@178.128.114.155 << 'ENDSSH'
+#         #    cd /var/www/jobdeal-landing-page
+#         #    rm -rf *
+#         #    # Assuming your build artifacts are in the "build" directory
+#         #    cp -R /var/www/jobdeal-landing-page/* .
+#         #    ENDSSH
