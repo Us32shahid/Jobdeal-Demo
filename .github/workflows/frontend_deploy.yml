@@ -1,46 +1,29 @@
-# name: jobdeal-landing-page
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
-# on:
-#  push:
-#    branches:
-#      - main  # Adjust to your main branch name
+name: Node.js CI
 
-# jobs:
-#  build_and_deploy:
-#    name: Build and Deploy
-#    runs-on: ubuntu-latest
-#    container:
-#     image: node:16
+on:
+  push:
+    branches: [ "main" ]
 
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v2
 
-#      - name: Install project dependencies
-#        run: npm install
+jobs:
+  build:
 
-#      - name: Build the frontend
-#        run: npm run build  # Replace with your build command
-#      - name: Zip build directory
-#        run: zip -r build.zip build/
+    runs-on: self-hosted
 
-#      - name: Deploy to Droplet
-#        uses: appleboy/ssh-action@master
-#        with:
-#          host: ${{ secrets.DROPLET_IP }}  # Add your droplet's IP address as a GitHub secret
-#          username: root  # Replace with your droplet's SSH username
-#          key: ${{ secrets.SSH_PRIVATE_KEY }}
-#          source: build.zip
-#          target: /path/to/droplet/directory/
-        
-#          #  host: 178.128.114.155
-#         #  username: root  # Droplet username is root
-#         #  key: ${{ secrets.SSH_PRIVATE_KEY }}
-#         #  port: 22
-#         #  script: |
-#         #    ssh -i root@178.128.114.155 << 'ENDSSH'
-#         #    cd /var/www/jobdeal-landing-page
-#         #    rm -rf *
-#         #    # Assuming your build artifacts are in the "build" directory
-#         #    cp -R /var/www/jobdeal-landing-page/* .
-#         #    ENDSSH
+    strategy:
+      matrix:
+        node-version: [16.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm ci
+    - run: npm run build --if-present
